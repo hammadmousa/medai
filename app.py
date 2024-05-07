@@ -10,14 +10,15 @@ def generate_content(img=None):
     load_dotenv()
     gemini_api_key = os.getenv('GEMINI_API_KEY')
     genai.configure(api_key=gemini_api_key)
-    model = genai.GenerativeModel('gemini-1.0-pro-vision-latest')
+    model = genai.GenerativeModel('gemini-1.0-pro-vision-latest') # gemini-1.0-pro-vision-latest
     try:
         response = model.generate_content([img])
         # analysis model
         model_ana = genai.GenerativeModel('gemini-1.5-pro-latest')
+        temperature = 0.8
         prompt_ana = f'''if this text is a medical report, X-Ray, MRI (Magnetic Resonance Imaging), CT (Computed Tomography), Ultrasound, PET (Positron Emission Tomography), SPECT (Single Photon Emission Computed Tomography), Mammography, Fluoroscopy, DEXA (Dual-Energy X-ray Absorptiometry) analysis: \n"{response.text}" \n\n give me more explain for the results and sure to say "الرجاء التواصل مع طبيب لمعلومات أكثر" Answer ONLY in Arabic.
         else (The given Text not related to any medical information) then reponse "لا يمكنني المساعدة بذلك"'''
-        response_ana = model_ana.generate_content([prompt_ana])
+        response_ana = model_ana.generate_content([prompt_ana],temperature)
         return response_ana.text 
     except Exception as e:
         st.error("Failed to generate content: {}".format(e))
@@ -61,3 +62,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
